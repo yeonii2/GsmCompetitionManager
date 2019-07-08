@@ -1,0 +1,13 @@
+        <!--<dd><%=resol%></dd>-->
+      </dl>
+      <%}%>
+
+      <%if(contest === 2||contest === 3){
+        var name = JSON.stringify(id);
+      %>
+      <dl>
+        <dt>GSM 페스티벌</dt>
+        <!--<dd><%=TN%></dd>
+        <dd><%=mean%></dd>
+        <dd><%=name[0]%></dd>
+        <dd><%=name[1]%></dd>-->

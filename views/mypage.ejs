@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel= "stylesheet" type="text/css" href="index.css">
+    <link rel= "stylesheet" type="text/css" href="mypage.css">
+    <title>Mypage</title>
+    <script>
+      function removeCheck() {
+        if (confirm("정말 삭제하시겠습니까??") == false)
+          return false;
+        else
+          return true;
+      }
+    </script>
+  </head>
+  <body>
+    <ul class="bar">
+      <li class="bar-menu"><a href="schedule.ejs">일정표</a></li>
+      <li class="bar-menu"><a href="match.ejs">대진표</a></li>
+      <li class="bar-menu"><a href="participation.ejs">참가신청</a></li>
+      <a href="index.ejs"><img src="GCMLOGO" style="width:110px; position:relative; left:29%"></a>
+      <li class="login"style="float:right; list-style-type:none" >
+        <% if(!log){ %>
+            <a href="/login.html">로그인</a>
+        <% } else { %>
+            <a href="mypage.ejs" ><%= log%>님</a>
+        <% } %>
+      </li>
+    </ul>
+
+    <div class="calendar-container">
+      <p><%=log%>님 MY PAGE</p>
+      <p class="part">참가 신청 목록</p>
+      <%if(contest === 1||contest === 3){%>
+        <form action="/mypage1.ejs" method="POST" class="forms" onsubmit="return removeCheck()">
+          <dl>
+            <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px;">-</button> 영어 골든벨</dt>
+          </dl>
+        </form>
+      <%}%>
+
+      <%if(contest === 2||contest === 3){
+      %>
+        <form action="/mypage2.ejs" method="POST" class="forms" onsubmit="return removeCheck()">
+          <dl>
+            <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px;">-</button> GSM 페스티벌</dt>
+          </dl>
+        </form>
+      <%}%>
+
+
+      <center><button type="button" name="button"><a href="/logout">로그아웃</a></button></center>
+    </div>
+  </body>
+</html>

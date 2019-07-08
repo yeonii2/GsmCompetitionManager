@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel= "stylesheet" type="text/css" href="index.css">
+    <style media="screen">
+      p{
+        font-family: '12롯데마트드림Medium';
+        margin-inline-start: 20px;
+        margin-inline-end: 20px;
+        font-size: 25pt;
+        text-align: center;
+      }
+    </style>
+    <title>match</title>
+  </head>
+  <body>
+    <ul>
+      <li><a href="schedule.ejs">일정표</a></li>
+      <li class="now"><a href="match.ejs">대진표</a></li>
+      <li><a href="participation.ejs">참가신청</a></li>
+      <a href="index.ejs"><img src="GCMLOGO" style="width:110px; position:relative; left:29%"></a>
+      <li style="float:right; list-style-type:none">
+        <% if(!log){ %>
+          <a href="/login.html">로그인</a>
+        <% } else { %>
+          <a href="mypage.ejs" ><%= log%>님</a>
+        <% } %>
+      </li>
+    </ul>
+
+    <div class="calendar-container">
+      <p>대진표</p>
+      <img src="matchpng" alt="대진표" style="width: 90%; position : relative; left: 5%">
+    </div>
+  </body>
+</html>

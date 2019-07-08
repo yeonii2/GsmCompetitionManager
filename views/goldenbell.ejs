@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel= "stylesheet" type="text/css" href="index.css">
+    <link rel= "stylesheet" type="text/css" href="goldenbell.css">
+    <title>goldenbell</title>
+  </head>
+  <body>
+    <ul>
+      <li><a href="schedule.ejs">일정표</a></li>
+      <li><a href="match.ejs">대진표</a></li>
+      <li class="now"><a href="participation.ejs">참가신청</a></li>
+      <a href="index.ejs"><img src="GCMLOGO" style="width:110px; position:relative; left:29%"></a>
+      <li style="float:right; list-style-type:none">
+        <% if(!log){ %>
+          <a href="/login.html">로그인</a>
+        <% } else { %>
+          <a href="mypage.ejs" ><%= log%>님</a>
+        <% } %>
+      </li>
+    </ul>
+
+    <div class="calendar-container">
+			<div class="wraps">
+				<form action="/goldenbell.ejs" method="POST" class="forms">
+					<span class="formtitle">참가 신청</span>
+
+          <label class="label-input">각오 *</label>
+  				<div class="wrapss">
+  					<textarea class="input" required="required" name="message" placeholder="Write us a message"></textarea>
+  					<span class="focus-input"></span>
+          </div>
+          <div class="submit-wrap">
+            <input type="submit" value="제출" class="btn">
+          </div>
+				</form>
+			</div>
+		</div>
+  </body>
+</html>

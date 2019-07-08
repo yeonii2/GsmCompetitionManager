@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel= "stylesheet" type="text/css" href="index.css">
+    <link rel= "stylesheet" type="text/css" href="participation.css">
+    <title>participation</title>
+  </head>
+  <body onload="if(<%= JSON.stringify(alert1)%>!=''){
+    alert(<%= JSON.stringify(alert1)%>)
+    };">
+    <ul>
+      <li><a href="schedule.ejs">일정표</a></li>
+      <li><a href="match.ejs">대진표</a></li>
+      <li class="now"><a href="participation.ejs">참가신청</a></li>
+      <a href="index.ejs"><img src="GCMLOGO" style="width:110px; position:relative; left:29%"></a>
+      <li style="float:right; list-style-type:none">
+        <% if(!log){ %>
+          <a href="/login.html">로그인</a>
+        <% } else { %>
+          <a href="mypage.ejs" ><%= log%>님</a>
+        <% } %>
+      </li>
+    </ul>
+
+    <div class="calendar-container">
+      <p>전체 대회 목록</p>
+      <dl>
+        <dt class="done">e-sports 대회</dt>
+        <dt class="done">영어 팝송대회</dt>
+        <dt><a href="goldenbell.ejs">영어 골든벨</a></dt>
+        <dt><a href="gsmfestival.ejs">GSM 페스티벌</a></dt>
+      </dl>
+    </div>
+  </body>
+</html>

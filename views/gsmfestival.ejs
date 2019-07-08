@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel= "stylesheet" type="text/css" href="index.css">
+    <link rel= "stylesheet" type="text/css" href="gsmfestival.css">
+    <title>GSMFestival</title>
+  </head>
+  <body>
+    <ul>
+      <li><a href="schedule.ejs">일정표</a></li>
+      <li><a href="match.ejs">대진표</a></li>
+      <li class="now"><a href="participation.ejs">참가신청</a></li>
+      <a href="index.ejs"><img src="GCMLOGO" style="width:110px; position:relative; left:29%"></a>
+      <li style="float:right; list-style-type:none">
+        <% if(!log){ %>
+          <a href="/login.html">로그인</a>
+        <% } else { %>
+          <a href="mypage.ejs" ><%= log%>님</a>
+        <% } %>
+      </li>
+    </ul>
+
+
+    <div class="calendar-container">
+			<div class="wraps">
+				<form action="/gsmfestival.ejs" method="POST" class="forms" >
+					<span class="formtitle">참가 신청</span>
+
+					<label class="label-input">팀명 *</label>
+					<div class="wrapss">
+						<input class="input" type="text" name="Tname" placeholder="Name" required="required">
+						<span class="focus-input"></span>
+					</div>
+
+					<label class="label-input">팀명 의미 *</label>
+					<div class="wrapss">
+						<input class="input" type="text" name="mean" placeholder="The meaning is" required="required">
+						<span class="focus-input"></span>
+					</div>
+
+					<label class="label-input">팀장 *</label>
+					<div class="wrapss rs1">
+						<input class="input" type="text" name="CstudentID" placeholder="StudentID" required="required">
+						<span class="focus-input"></span>
+					</div>
+					<div class="wrapss rs2">
+						<input class="input" type="text" name="Cname" placeholder="Name" required="required">
+						<span class="focus-input"></span>
+					</div>
+
+					<label class="label-input">팀원 *</label>
+					<div class="wrapss rs1">
+						<input class="input" type="text" name="studentID" placeholder="StudentID" required="required">
+						<span class="focus-input"></span>
+					</div>
+					<div class="wrapss rs2">
+						<input class="input" type="text" name="name" placeholder="Name" required="required">
+						<span class="focus-input"></span>
+          </div>
+          <div class="submit-wrap">
+            <input type="submit" value="제출" class="btn">
+          </div>
+				</form>
+			</div>
+		</div>
+  </body>
+</html>

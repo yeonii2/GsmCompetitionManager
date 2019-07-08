@@ -1,0 +1,146 @@
+*{
+  font-family: '12롯데마트드림Light';
+}
+
+body {
+  background: #f8f8f8;
+  box-sizing: border-box;
+  color: #51565d;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-bottom: 0.7px solid black;
+}
+
+li {
+  float: left;
+  border-bottom: 0.7px solid black;
+}
+
+li a {
+  display: block;
+  color: #000000;
+  padding: 20px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: bold;
+}
+
+li a:hover {
+  background-color: #DDE546;
+}
+
+.now{
+  border-bottom: 1.2px solid #DDE546;
+}
+
+body .entries { /*글씨가 길어지면 밑으로 내리기*/
+  width: calc(100% - 80px);
+  max-width: 800px;
+  margin: auto;
+  position: relative;
+  left: -5px;
+}
+
+body .entries .entry { /*글씨 위치*/
+  width: calc(50% - 80px);
+  float: left;
+  padding: 20px;
+  clear: both;
+  text-align: right;
+}
+
+body .entries .entry:not(:first-child) {
+  margin-top: -60px;
+}
+
+body .entries .entry .title {
+  font-size: 32px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/*왼쪽 글씨*/
+body .entries .entry .title:before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 4px solid #ffffff;
+  background-color: #DDE546;
+  border-radius: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -73px;
+  z-index: 1000;
+}
+
+body .entries .entry .title.big:before {
+  width: 24px;
+  height: 24px;
+  -webkit-transform: translate(8px, -50%);
+          transform: translate(8px, -50%);
+}
+
+body .entries .entry .body p {
+  line-height: 1.4em;
+}
+
+/*오른쪽 글씨*/
+body .entries .entry:nth-child(2n) {
+  text-align: left;
+  float: right;
+}
+
+body .entries .entry:nth-child(2n) .title {
+  font-size: 32px;
+}
+
+body .entries .entry:nth-child(2n) .title:before {
+  left: -63px;
+}
+
+body .entries .entry:nth-child(2n) .title.big:before {
+  width: 24px;
+  height: 24px;
+  transform: translate(-8px, -50%);
+}
+
+.title{
+  color: #DDE546
+}
+
+.vr {
+    display: block;
+    width:10px;
+    background-color:#DDE546;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:150px;
+}
+
+.calendar-container {
+  width: 90%;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: #fff;
+  max-width: 1200px;
+}
+
+.vr {
+    display: block;
+    width:4px;
+    background-color:#DDE546;
+    top:12.2%;
+    left:49.9%;
+    height: 693px;
+}

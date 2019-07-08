@@ -1,0 +1,42 @@
+body {
+  background: #f8f8f8;
+  box-sizing: border-box;
+}
+
+.calendar-container {
+  width: 90%;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: #fff;
+  max-width: 1200px;
+}
+
+p{
+  font-family: '12롯데마트드림Medium';
+  margin-inline-start: 20px;
+  margin-inline-end: 20px;
+  font-size: 25pt;
+  text-align: center;
+}
+
+dl{
+  font-size: 20px;
+  text-align: center;
+}
+
+dt{
+  margin: 20px;
+}
+
+a{
+  text-decoration: none;
+  color: rgb(0, 176, 240);
+}
+
+.done{
+  color: gray;
+}

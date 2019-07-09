@@ -1,14 +1,3 @@
-
-*{
-  font-family: '12롯데마트드림Light';
-}
-
-body {
-  background: #f8f8f8;
-  box-sizing: border-box;
-  color: #51565d;
-}
-
 ul {
   list-style-type: none;
   margin: 0;
@@ -34,10 +23,6 @@ li a {
 
 li a:hover {
   background-color: #DDE546;
-}
-
-.now{
-  border-bottom: 1.2px solid #DDE546;
 }
 
 body .entries { /*글씨가 길어지면 밑으로 내리기*/

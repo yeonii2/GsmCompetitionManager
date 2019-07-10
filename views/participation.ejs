@@ -1,13 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="kr" dir="ltr">
   <head>
     <meta charset="utf-8">
     <link rel= "stylesheet" type="text/css" href="index.css">
     <link rel= "stylesheet" type="text/css" href="participation.css">
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <title>participation</title>
   </head>
-  <body onload="if(<%= JSON.stringify(alert1)%>!=''){
-    alert(<%= JSON.stringify(alert1)%>)
+  <body onload="var data = <%= JSON.stringify(alert1)%>;
+  if(data!=''){
+	  var name = <%=JSON.stringify(log)%>;  
+	  if(data === name+'님 영어 골든벨에 신청되셨습니다! 좋은 성적 거두시길!' || data === name+'님 GSMFESTIVAL에 신청되셨습니다! 좋은 성적 거두시길!'){
+		swal(<%= JSON.stringify(alert1)%>, '', 'success');
+	}
+    else swal(<%= JSON.stringify(alert1)%>, '', 'error');
     };">
     <ul>
       <li><a href="schedule.ejs">일정표</a></li>

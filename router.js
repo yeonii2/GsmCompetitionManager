@@ -166,7 +166,6 @@ function cnt(){
                                             console.log('Error!!!');
                                             res.end();
                                         }
-
                                         if (docs) {
                                             //res.write('<script type="text/javascript">alert("'+UserName+'학생님 신청되셨습니다! 좋은 성적 거두시길!");</script>');
                                             cnt();
@@ -175,7 +174,6 @@ function cnt(){
                                         else {
                                             res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:0});
                                         }
-
                                     }
                                     else {
                                         console.log('DB 연결 안됨');
@@ -243,6 +241,7 @@ function cnt(){
                                             res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:0});
                                         }
 
+                
                                     }
                                     else {
                                         console.log('DB 연결 안됨');
@@ -271,7 +270,6 @@ function cnt(){
             var paramID = req.body.id || req.query.id;
             var paramPW = req.body.passwords || req.query.passwords;
             console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
-
             if (database) {
                 authUser(database, paramID, paramPW, 0,
                     function (err, docs) {
@@ -283,7 +281,6 @@ function cnt(){
                                 res.end();
                                 return;
                             }
-
                             if (docs) {
                                 UserName = docs[0].name;
                                 res.render('index', {log:UserName});
@@ -299,7 +296,6 @@ function cnt(){
                                         res.end(data);
                                 });
                             }
-
                         }
                         else {
                             console.log('DB 연결 안됨');
@@ -323,7 +319,6 @@ function cnt(){
             var paramPW = req.body.passwords || req.query.passwords;
             var paramName = req.body.name || req.query.name;
             console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
-
             if (database) {
                 if (database) {
                     authUser(database, paramID, paramPW, paramName,
@@ -336,7 +331,6 @@ function cnt(){
                                     res.end();
                                     return;
                                 }
-
                                 if (docs) {
                                     res.write('<script type="text/javascript">alert("이미 존재하는 회원입니다!");</script>');
                                     fs.readFile(__dirname+'/login.html', function(err, data){
@@ -356,7 +350,6 @@ function cnt(){
                                                 res.end();
                                                 return;
                                             }
-
                                             if (result) {
                                                 res.write('<script type="text/javascript">alert("회원가입 성공!");</script>');
                                                 fs.readFile(__dirname+'/login.html', function(err, data){
@@ -378,7 +371,6 @@ function cnt(){
                                         }
                                     );
                                 }
-
                             }
                             else {
                                 console.log('DB 연결 안됨');
@@ -400,7 +392,6 @@ function cnt(){
                 // res.write('<h1>databasae 연결 안됨</h1>');
             res.end();
             }
-
         }
     );
 }
@@ -515,7 +506,6 @@ function cnt(){
             res.end(data);
         })
     });
-
     router.get('/GCMLOGO', function(req, res){
         fs.readFile(__dirname + '/img/GCM_logo.png', function(err, data){
             res.writeHead(200, {'Content-Type':'text/html'});
@@ -536,7 +526,6 @@ function cnt(){
         var users = database.collection("users");
         var result = users.find({ "id": id, "passwords": password });
         */
-
         userModel.find({ "$or":[{"id": id}, {"passwords": password}, {"name":name}] },
             function (err, docs)
             {

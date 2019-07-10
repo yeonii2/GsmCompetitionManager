@@ -2,11 +2,20 @@
   font-family: '12롯데마트드림Light';
 }
 
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   background: #f8f8f8;
   box-sizing: border-box;
   color: #51565d;
 }
+
+::-webkit-scrollbar {
+  display:none;
+} 
 
 .now{
   border-bottom: 1.2px solid #DDE546;
@@ -115,12 +124,12 @@ body .entries .entry:nth-child(2n) .title.big:before {
 
 .vr {
     display: block;
-    width:10px;
+    width:4px;
     background-color:#DDE546;
     position:absolute;
-    top:0;
-    bottom:0;
-    left:150px;
+    top:10.2%;
+    left:49.9%;
+    height: 693px;
 }
 
 .calendar-container {
@@ -133,13 +142,4 @@ body .entries .entry:nth-child(2n) .title.big:before {
   border-radius: 10px;
   background: #fff;
   max-width: 1200px;
-}
-
-.vr {
-    display: block;
-    width:4px;
-    background-color:#DDE546;
-    top:12.2%;
-    left:49.9%;
-    height: 693px;
 }

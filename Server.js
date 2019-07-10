@@ -7,7 +7,7 @@ var expressErrorHandler = require('express-error-handler');
 var favicon = require('serve-favicon');
 
 var dbrouter = require('./router');
- 
+
 var app = express();      //express 서버 객체
 app.use(serveStatic(path.join('public', __dirname, 'public')));
 var bodyParser_post = require('body-parser');       //post 방식 파서
@@ -16,10 +16,10 @@ var bodyParser_post = require('body-parser');       //post 방식 파서
 app.use(bodyParser_post.urlencoded({ extended: false }));            // post 방식 세팅
 app.use(bodyParser_post.json());                                     // json 사용 하는 경우의 세팅
 //post 방식 일경우 end
- 
+
 app.use(express.static(__dirname + '/public'));
 app.use(serveStatic(path.join(__dirname, 'public')));
- 
+
 app.set("view engine","ejs"); // 1
 app.set("views","views"); // 1
 
@@ -34,16 +34,16 @@ app.use(expressSession({
     resave: true,
     saveUninitialized: true
 }));
- 
- 
+
+
 //라우터 미들웨어 등록하는 구간에서는 라우터를 모두  등록한 이후에 다른 것을 세팅한다
 //그렇지 않으면 순서상 라우터 이외에 다른것이 먼저 실행될 수 있다
 app.use('/', dbrouter);       //라우트 미들웨어를 등록한다
- 
- 
+
+
 var errorHandler = expressErrorHandler(
     { static: { '404': '/html/404.html' } }              //404 에러 코드가 발생하면 해당 페이지를 보여주는 예외 미들웨어
-); 
+);
 // app.use(expressErrorHandler.httpError(404));
 // app.use(errorHandler );
 
@@ -51,6 +51,6 @@ var errorHandler = expressErrorHandler(
 app.listen(8080,
     function () {
         console.log('8080포트에서 대기중');
-                
+
     }
 );

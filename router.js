@@ -7,9 +7,11 @@ var userModel;
 var mongoose = require('mongoose');
 var database;
 var userSchema = null;
+var crypto = require("crypto");
 
-var Team_Cnt = [0, 0];
+var Team_Cnt = [];
 var UserName = null;
+var UserID = null;
 var r = 0;
 if(!database)
     connectDB();
@@ -20,43 +22,43 @@ function connectDB() {
     //:27017  몽고디비 포트
     //local db 생성시 만든 폴더 명
     var databaseURL = 'mongodb://localhost:27017/test';
-
+ 
     mongoose.Promise = global.Promise;
     mongoose.connect(databaseURL, { useNewUrlParser: true });
-
+ 
     database = mongoose.connection;     //db와 연결 시도
-
+ 
     database.on('open',         //db 연결 될때의 이벤트
         function ()
         {
             console.log('data base 연결됨 ' + databaseURL);
-
-
+            
+ 
             //몽구스는 스키마를 정의하고 해당 스키마에 해당 하는 데이터를 집어넣는 방식으로 테이블과 유사
             userSchema = mongoose.Schema({
                 id: String,
                 passwords: String,
                 name: String,
-
+                
             });
             console.log('userSchema 정의함');
-
+ 
             //컬렏션과 스키마를 연결시킴
             userModel = mongoose.model('users', userSchema);
             console.log('userModel 정의함');
         }
     );
-
+ 
     database.on('disconnected',         //db 연결 끊길떄
         function () {
             console.log('data base 연결 끊어짐');
         }
     );
-
+ 
     database.on('error',         //에러 발생하는 경우
         console.error.bind(console, 'mongoose 연결 에러')
     );
-
+ 
 }
 
 function cnt(){
@@ -141,7 +143,7 @@ function cnt(){
             if(UserName === null)
             {
                 //res.writeHead(200, { "Content-Type": "text/ejs;characterset=utf8" });
-                //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');
+                //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');   
                 //res.sendFile(__dirname+'/participation.ejs');
                 console.log('로그인 안됨');
                 res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:"로그인 후 이용하십시오!"});
@@ -166,6 +168,7 @@ function cnt(){
                                             console.log('Error!!!');
                                             res.end();
                                         }
+                
                                         if (docs) {
                                             //res.write('<script type="text/javascript">alert("'+UserName+'학생님 신청되셨습니다! 좋은 성적 거두시길!");</script>');
                                             cnt();
@@ -174,6 +177,7 @@ function cnt(){
                                         else {
                                             res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:0});
                                         }
+                
                                     }
                                     else {
                                         console.log('DB 연결 안됨');
@@ -207,7 +211,7 @@ function cnt(){
 
             if(UserName === null)
             {
-                //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');
+                //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');   
                 //res.sendFile(__dirname+'/participation.ejs');
                 res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:"로그인 후 이용하십시오!"});
             }
@@ -240,7 +244,6 @@ function cnt(){
                                         else {
                                             res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:0});
                                         }
-
                 
                                     }
                                     else {
@@ -264,12 +267,36 @@ function cnt(){
         }
     );
 
+    router.route('/change.html').post(
+        function (req, res) {
+            console.log('/change 호출됨');
+            var parampw = req.body.pw || req.query.pw;
+            var Newpw = req.body.repw || req.query.repw;
+            if (database) {
+                userModel.ChangePassword(UserID,parampw,Newpw, function(err, docs) {
+                    if (err) {                     
+                      console.log(err);
+                    }
+                    else if (docs.length > 0) {
+                      console.log(req.session.data);
+                      console.log('pw 변경');
+                    }
+                    else {
+                      console.log('비밀번호 틀림');
+                      res.render('index', { title: 'index', message:1 });
+                    }
+                });
+            }
+        }
+    );
+
     router.route('/login.html').post(
         function (req, res) {
             console.log('/login 호출됨');
             var paramID = req.body.id || req.query.id;
             var paramPW = req.body.passwords || req.query.passwords;
             console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
+    
             if (database) {
                 authUser(database, paramID, paramPW, 0,
                     function (err, docs) {
@@ -281,7 +308,9 @@ function cnt(){
                                 res.end();
                                 return;
                             }
+    
                             if (docs) {
+                                UserID = docs[0].id;
                                 UserName = docs[0].name;
                                 res.render('index', {log:UserName});
                             }
@@ -296,6 +325,7 @@ function cnt(){
                                         res.end(data);
                                 });
                             }
+    
                         }
                         else {
                             console.log('DB 연결 안됨');
@@ -303,9 +333,9 @@ function cnt(){
                             // res.write('<h1>databasae 연결 안됨</h1>');
                         res.end();
                         }
-
-
-
+    
+    
+    
                     }
                 );
             }
@@ -319,6 +349,7 @@ function cnt(){
             var paramPW = req.body.passwords || req.query.passwords;
             var paramName = req.body.name || req.query.name;
             console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
+    
             if (database) {
                 if (database) {
                     authUser(database, paramID, paramPW, paramName,
@@ -331,6 +362,7 @@ function cnt(){
                                     res.end();
                                     return;
                                 }
+        
                                 if (docs) {
                                     res.write('<script type="text/javascript">alert("이미 존재하는 회원입니다!");</script>');
                                     fs.readFile(__dirname+'/login.html', function(err, data){
@@ -350,6 +382,7 @@ function cnt(){
                                                 res.end();
                                                 return;
                                             }
+                        
                                             if (result) {
                                                 res.write('<script type="text/javascript">alert("회원가입 성공!");</script>');
                                                 fs.readFile(__dirname+'/login.html', function(err, data){
@@ -371,6 +404,7 @@ function cnt(){
                                         }
                                     );
                                 }
+        
                             }
                             else {
                                 console.log('DB 연결 안됨');
@@ -378,13 +412,13 @@ function cnt(){
                                 // res.write('<h1>databasae 연결 안됨</h1>');
                             res.end();
                             }
-
-
-
+        
+        
+        
                         }
                     );
                 }
-
+                
             }
             else {
                 console.log('DB 연결 안됨');
@@ -392,6 +426,7 @@ function cnt(){
                 // res.write('<h1>databasae 연결 안됨</h1>');
             res.end();
             }
+    
         }
     );
 }
@@ -401,11 +436,11 @@ function cnt(){
     router.get('/', function(req, res){
         res.render('index' ,{log:UserName});
     });
-
+    
     router.get('/index.ejs', function(req, res){
         res.render('index' ,{log:UserName});
     });
-
+    
     router.get('/mypage.ejs', function(req, res){
         r=0;
         authResolution(database, UserName, 0,function(err, docs){
@@ -427,7 +462,7 @@ function cnt(){
             else {
                 // res.render('mypage' ,{
                 //     contest:0,
-                //     log:UserName
+                //     log:UserName 
                 //     // resol:0,//result[0].resol,
                 //     // TN:0,
                 //     // id:[0, 0],
@@ -447,7 +482,7 @@ function cnt(){
             else {
                 // res.render('mypage' ,{
                 //     contest:0,
-                //     log:UserName
+                //     log:UserName 
                 //     // resol:0,//result[0].resol,
                 //     // TN:0,
                 //     // id:[0, 0],
@@ -473,39 +508,40 @@ function cnt(){
     });
     router.get('/participation.ejs', function(req, res){
         cnt();
-        res.render('participation', {log:UserName, Teamcnt:Team_Cnt,alert1:""});
+        res.render('participation', {log:UserName, Teamcnt:Team_Cnt,alert1:""});  
     });
     router.get('/schedule.ejs', function(req, res){
-        res.render('schedule' ,{log:UserName});
+        res.render('schedule' ,{log:UserName});     
     });
-
+    
     router.get('/goldenbell.ejs', function(req, res){
-        res.render('goldenbell' ,{log:UserName});
+        res.render('goldenbell' ,{log:UserName});     
     });
-
+    
     router.get('/gsmfestival.ejs', function(req, res){
-        res.render('gsmfestival' ,{log:UserName});
+        res.render('gsmfestival' ,{log:UserName});     
     });
-
+    
     router.get('/login.html', function(req, res){
         res.sendFile(__dirname + '/login.html');
     });
-
+    
     router.get('/logout', function(req, res){
         UserName = null;
         res.render('index', {log:UserName});
     });
-
+    
     router.get('/addUser.html', function(req, res){
         res.sendFile(__dirname + '/addUser.html');
     });
-
+    
     router.get('/matchpng', function(req, res){
         fs.readFile(__dirname + '/img/대진표.PNG', function(err, data){
             res.writeHead(200, {'Content-Type':'text/html'});
             res.end(data);
         })
     });
+    
     router.get('/GCMLOGO', function(req, res){
         fs.readFile(__dirname + '/img/GCM_logo.png', function(err, data){
             res.writeHead(200, {'Content-Type':'text/html'});
@@ -518,22 +554,21 @@ function cnt(){
 //login
 {
 
-    var authUser = function (db, id, password, name, callback) {
-        console.log('input id :' + id.toString() + '  :  pw : ' + password);
+    var authUser = function (db, id, pw, name, callback) {
+        console.log('input id :' + id.toString() + '  :  pw : ' + pw);
+        Encryption(id, pw, function(_id, _pw){
+            id = _id;
+            pw = _pw;
+        });
 
-        //cmd 에서 db.users  로 썻던 부분이 있는데 이때 이 컬럼(테이블)에 접근은 다음처럼 한다
-        /*
-        var users = database.collection("users");
-        var result = users.find({ "id": id, "passwords": password });
-        */
-        userModel.find({ "$or":[{"id": id}, {"passwords": password}, {"name":name}] },
+        userModel.find({ "$or":[{"id": id}, {"passwords": pw}, {"name":name}] },
             function (err, docs)
             {
                 if (err) {
                     callback(err, null);
                     return;
                 }
-
+     
                 if (docs.length > 0) {
                     console.log('find user [ ' + docs + ' ]');
                     callback(null, docs);
@@ -544,15 +579,18 @@ function cnt(){
                 }
             }
         );
-
+     
     };
-
-    var addUser = function (db, id, passwords, name, callback) {
-        console.log('add User 호출됨' + id + '  , ' + passwords);
-
-
-        var user = new userModel({ "id": id, "passwords": passwords, "name": name });
-
+     
+    var addUser = function (db, id, pw, name, callback) {
+        console.log('add User 호출됨' + id + '  , ' + pw);
+        Encryption(id, pw, function(_id, _pw){
+            id = _id;
+            pw = _pw;
+        });
+     
+        var user = new userModel({ "id": id, "passwords": pw, "name": name });
+     
         //user 정보를 저장하겠다는 함수
         user.save
         (
@@ -563,27 +601,31 @@ function cnt(){
                     callback(err, null);
                     return;
                 }
-
+     
                 //데이터가 추가됐다면 insertedCount 카운트가 0 보다 큰값이 된다
                 console.log('사용자 추가 됨');
                 callback(null, user);
             }
         );
-
+     
     };
+    
+    var addUser = function (db, id, pw, name, callback) {
+        console.log('add User 호출됨' + id + '  , ' + pw);
+        Encryption(id, pw, function(_id, _pw){
+            id = _id;
+            pw = _pw;
+        });
 
-    var addUser = function (db, id, passwords, name, callback) {
-        console.log('add User 호출됨' + id + '  , ' + passwords);
         var users = db.collection('users');
-
         //컬렉션에 데이터 추가할때는 배열 형태로 집어 넣는다
-        users.insertMany([{ "id": id, "passwords": passwords, "name": name }],
+        users.insertMany([{ "id": id, "passwords": pw, "name": name }],
             function (err, result) {
                 if (err) {
                     callback(err, null);
                     return;
                 }
-
+     
                 //데이터가 추가됐다면 insertedCount 카운트가 0 보다 큰값이 된다
                 if (result.insertedCount > 0) {
                     console.log('사용자 추가 됨' + result.insertedCount);
@@ -592,13 +634,50 @@ function cnt(){
                 else {
                     console.log('사용자 추가 안됨' + result.insertedCount);
                     callback(null, null);
-
+     
                 }
-
+     
             }
         );
-
+     
     };
+
+    var Encryption = function(id, pw, callback){
+        var shasum = crypto.createHash('sha256');
+        var shasum1 = crypto.createHash('sha256');
+
+        shasum.update(id);
+        shasum1.update(pw);
+
+        var hashid = shasum.digest('hex');
+        var hashpw = shasum1.digest('hex');
+        callback(hashid, hashpw);
+    }
+
+    var ChangePassword = function(id,pw,repw,callback){
+        if(!db) return;
+        Encryption(id, pw, function(id, pw){
+            this.id = id;
+            this.pw = pw;
+        });
+
+        db.collection('User').find({ "id": id, "password": pw},function (err, docs) {
+            if (err) {
+                callback(err, null);
+            }
+            else if (docs) {
+                var shasum1 = crypto.createHash('sha256');
+                shasum1.update(repw);
+                var rehashpw = shasum1.digest('hex');
+                db.collection('User').update({ 'id':id,'password':pw},
+                {$set:{'id':id,'password':rehashpw}});
+                callback(null, docs);
+            }
+            else {
+                callback(null, null);
+            }
+        });
+    }
 }
 
 //goldenbell
@@ -611,7 +690,7 @@ function cnt(){
                 callback(err, null);
                 return;
             }
-
+    
             if (docs.length > 0) {
                 console.log('find user [ ' + docs + ' ]');
                 callback(null, docs);
@@ -622,15 +701,15 @@ function cnt(){
             }
         }
     );
-
+    
     };
-
+    
     var addResolution = function (db, name, resol,callback) {
     console.log('addResolution 호출됨 name : ' + name + ' resol : ' + resol);
-
-
+    
+    
     var user = new userModel({ "contest":"goldenbell", "name": name, "resol": resol });
-
+    
     //user 정보를 저장하겠다는 함수
     user.save
     (
@@ -641,19 +720,19 @@ function cnt(){
                 callback(err, null);
                 return;
             }
-
+    
             //데이터가 추가됐다면 insertedCount 카운트가 0 보다 큰값이 된다
             console.log('각오 추가 됨');
             callback(null, user);
         }
     );
-
+    
     };
-
+    
     var addResolution = function (db, name, resol, callback) {
     console.log('addResolution 호출됨 name : ' + name + ' resol : ' + resol);
     var users = db.collection('users');
-
+    
     //컬렉션에 데이터 추가할때는 배열 형태로 집어 넣는다
     users.insertMany([{ "contest":"goldenbell", "name": name, "resol": resol }],
         function (err, result) {
@@ -661,7 +740,7 @@ function cnt(){
                 callback(err, null);
                 return;
             }
-
+    
             //데이터가 추가됐다면 insertedCount 카운트가 0 보다 큰값이 된다
             if (result.insertedCount > 0) {
                 console.log('각오 추가 됨' + result.insertedCount);
@@ -670,14 +749,14 @@ function cnt(){
             else {
                 console.log('각오 추가 안됨' + result.insertedCount);
                 callback(null, null);
-
+    
             }
-
+    
         }
     );
-
+    
     };
-
+    
 }
 
 //gsmfestival
@@ -691,7 +770,7 @@ function cnt(){
                     callback(err, null);
                     return;
                 }
-
+     
                 if (docs.length > 0) {
                     console.log('find gsmfestival');
                     callback(null, docs);
@@ -702,12 +781,12 @@ function cnt(){
                 }
             }
         );
-
+     
     };
 
     var authFestival = function (db, team, mean, id, name ,callback) {
-        userModel.find({
-            "contest":"gsmfestival",
+        userModel.find({ 
+            "contest":"gsmfestival", 
             "team": team
         },
             function (err, docs)
@@ -716,7 +795,7 @@ function cnt(){
                     callback(err, null);
                     return;
                 }
-
+     
                 if (docs.length > 0) {
                     console.log('find team [ ' + docs + ' ]');
                     callback(null, docs);
@@ -727,21 +806,21 @@ function cnt(){
                 }
             }
         );
-
+     
     };
-
+    
     var addFestival = function (db, team, mean, id, name ,callback) {
         console.log('addFestival 호출됨 team : ' + team);
-
-
-        var user = new userModel({
-            "contest":"gsmfestival",
-            "team": team,
-            "mean": mean,
-            "id": id,
-            "name": name
+     
+     
+        var user = new userModel({ 
+            "contest":"gsmfestival", 
+            "team": team, 
+            "mean": mean, 
+            "id": id, 
+            "name": name 
         });
-
+     
         //user 정보를 저장하겠다는 함수
         user.save
         (
@@ -752,33 +831,33 @@ function cnt(){
                     callback(err, null);
                     return;
                 }
-
+     
                 //데이터가 추가됐다면 insertedCount 카운트가 0 보다 큰값이 된다
                 console.log('팀 추가 됨');
                 callback(null, user);
             }
         );
-
+     
     };
-
+    
     var addFestival = function (db, team, mean, id, name ,callback) {
         console.log('addFestival 호출됨 team : ' + team);
         var users = db.collection('users');
-
+     
         //컬렉션에 데이터 추가할때는 배열 형태로 집어 넣는다
-        users.insertMany([{
-            "contest":"gsmfestival",
-            "team": team,
-            "mean": mean,
-            "id": id,
-            "name": name
+        users.insertMany([{ 
+            "contest":"gsmfestival", 
+            "team": team, 
+            "mean": mean, 
+            "id": id, 
+            "name": name 
         }],
             function (err, result) {
                 if (err) {
                     callback(err, null);
                     return;
                 }
-
+     
                 //데이터가 추가됐다면 insertedCount 카운트가 0 보다 큰값이 된다
                 if (result.insertedCount > 0) {
                     console.log('팀 추가 됨' + result.insertedCount);
@@ -787,12 +866,12 @@ function cnt(){
                 else {
                     console.log('팀 추가 안됨' + result.insertedCount);
                     callback(null, null);
-
+     
                 }
-
+     
             }
         );
-
+     
     };
 
 }

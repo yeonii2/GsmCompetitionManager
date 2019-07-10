@@ -2,18 +2,19 @@ var express = require('express');
 var router = express.Router();
 var app = express();
 var fs = require('fs');
-var userModel;
 
+var userModel;
 var mongoose = require('mongoose');
 var database;
 var userSchema = null;
 
+var Team_Cnt = [0, 0];
 var UserName = null;
+var r = 0;
 if(!database)
     connectDB();
- 
-//몽고디비에 연결 ,  보통 웹서버 만든 직후 연결 , DB 먼저 연결 되도 상관 없음
-//먼저 db를 가져온다 
+
+// mongodb 연결
 function connectDB() {
     //localhost 로컬 호스트
     //:27017  몽고디비 포트
@@ -58,200 +59,221 @@ function connectDB() {
  
 }
 
+function cnt(){
+    userModel.find({"contest": "goldenbell"}, function(err, docs){
+        if(err)
+            console.log(err.message);
+        if(docs)
+            Team_Cnt[0] = docs.length;
+    });
+    userModel.find({"contest": "gsmfestival"}, function(err, docs){
+        if(err)
+            console.log(err.message);
+        if(docs)
+            Team_Cnt[1] = docs.length;
+    });
+}
 
-router.route('/goldenbell.ejs').post(
-    function (req, res) {
-        console.log('/goldenbell 호출됨');
-        var paramResolution = req.body.message || req.query.message;
-        console.log('paramName : '+UserName+' paramResolution : '+paramResolution);
-
-        if(UserName === null)
-        {
-            //res.writeHead(200, { "Content-Type": "text/ejs;characterset=utf8" });
-            //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');   
-            //res.sendFile(__dirname+'/participation.ejs');
-            console.log('로그인 안됨');
-            res.render('participation', {log:UserName, alert1:"로그인 후 이용하십시오!"});
-        }
-        else if (database) {
-            authResolution(database, UserName, paramResolution,function(err,result){
-                if (database) {
-                    if (err) {
-                        console.log('Error!!!');
-                        // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                        // res.write('<h1>에러발생</h1>');
-                        res.end();
-                    }
-                    if (result) {
-                        res.render('participation', {log:UserName, alert1:UserName+'학생님께서는 이미 신청되셨습니다!'});
-                    }
-                    else{
-                        addResolution(database, UserName, paramResolution,
-                            function (err, docs) {
-                                if (database) {
-                                    if (err) {
-                                        console.log('Error!!!');
-                                        res.end();
-                                    }
-             
-                                    if (docs) {
-                                        //res.write('<script type="text/javascript">alert("'+UserName+'학생님 신청되셨습니다! 좋은 성적 거두시길!");</script>');
-                                        res.render('participation', {log:UserName, alert1:UserName+'님 영어 골든벨에 신청되셨습니다! 좋은 성적 거두시길!'});
-                                    }
-                                    else {
-                                        res.render('participation', {log:UserName, alert1:0});
-                                    }
-             
-                                }
-                                else {
-                                    console.log('DB 연결 안됨');
-                                    // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                                    // res.write('<h1>databasae 연결 안됨</h1>');
-                                   res.end();
-                                }
-                            }
-                        );
-                    }
+// router.post()
+{
+    router.route('/mypage1.ejs').post(
+        function (req, res) {
+            userModel.deleteOne({"contest":"goldenbell", "name": UserName},function(err, docs){
+                if(err) {
+                    res.render('mypage', {
+                        contest:r,
+                        log:UserName
+                        // resol:0,
+                        // TN:0,
+                        // id:[0, 0],
+                        // mean:0
+                    });
                 }
-                else {
-                    console.log('DB 연결 안됨');
-                    // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                    // res.write('<h1>databasae 연결 안됨</h1>');
-                   res.end();
+                if(docs){
+                    r-=1;
+                    res.render('mypage', {
+                        contest:r,
+                        log:UserName
+                        // resol:0,
+                        // TN:0,
+                        // id:[0, 0],
+                        // mean:0
+                    });
                 }
             });
         }
-    }
-);
+    );
 
-router.route('/gsmfestival.ejs').post(
-    function (req, res) {
-        console.log('/gsmfestival 호출됨');
-        var paramTeam = req.body.Tname || req.query.Tname;
-        var paramMean = req.body.mean || req.query.mean;
-        var paramID = [req.body.CstudentID || req.query.CstudentID , req.body.studentID || req.query.studentID];
-        var paramName = [req.body.Cname || req.query.Cname, req.body.name || req.query.name];
-        console.log('paramTeam : '+paramTeam);
-
-        if(UserName === null)
-        {
-            //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');   
-            //res.sendFile(__dirname+'/participation.ejs');
-            res.render('participation', {log:UserName, alert1:"로그인 후 이용하십시오!"});
-        }
-        else if (database) {
-            authFestival(database, paramTeam, paramMean, paramID, paramName, function(err,result){
-                if (database) {
-                    if (err) {
-                        console.log('Error!!!');
-                        res.end();
-                    }
-                    if (result) {
-                        // res.write('<script type="text/javascript">alert("이미 신청된 팀이름입니다!");</script>');
-                        res.render('participation', {log:UserName, alert1:'이미 신청된 팀이름입니다!'});
-                    }
-                    else{
-                        addFestival(database, paramTeam, paramMean, paramID, paramName,
-                            function (err, docs) {
-                                if (database) {
-                                    if (err) {
-                                        console.log('Error!!!');
-                                        // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                                        // res.write('<h1>에러발생</h1>');
-                                        res.end();
-                                    }
-                                    if (docs) {
-                                        //res.write('<script type="text/javascript">alert("'+docs.ops[0].team+'팀이 신청되었습니다! 좋은 성적 거두시길!");</script>');
-                                        res.render('participation', {log:UserName, alert1:UserName+'님 GSMFESTIVAL에 신청되셨습니다! 좋은 성적 거두시길!'});
-                                    }
-                                    else {
-                                        res.render('participation', {log:UserName, alert1:0});
-                                    }
-             
-                                }
-                                else {
-                                    console.log('DB 연결 안됨');
-                                    // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                                    // res.write('<h1>databasae 연결 안됨</h1>');
-                                   res.end();
-                                }
-                            }
-                        );
-                    }
+    router.route('/mypage2.ejs').post(
+        function (req, res) {
+            userModel.deleteOne({"contest":"gsmfestival", "$or":[{id:UserName},{name:UserName}]},function(err, docs){
+                if(err) {
+                    res.render('mypage', {
+                        contest:r,
+                        log:UserName
+                        // resol:0,
+                        // TN:0,
+                        // id:[0, 0],
+                        // mean:0
+                    });
                 }
-                else {
-                    console.log('DB 연결 안됨');
-                    // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                    // res.write('<h1>databasae 연결 안됨</h1>');
-                   res.end();
+                if(docs){
+                    r-=2;
+                    res.render('mypage', {
+                        contest:r,
+                        log:UserName
+                        // resol:0,
+                        // TN:0,
+                        // id:[0, 0],
+                        // mean:0
+                    });
                 }
             });
         }
-    }
-);
+    );
 
-router.route('/login.html').post(
-    function (req, res) {
-        console.log('/login 호출됨');
-        var paramID = req.body.id || req.query.id;
-        var paramPW = req.body.passwords || req.query.passwords;
-        console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
- 
-        if (database) {
-            authUser(database, paramID, paramPW,
-                function (err, docs) {
+    router.route('/goldenbell.ejs').post(
+        function (req, res) {
+            console.log('/goldenbell 호출됨');
+            var paramResolution = req.body.message || req.query.message;
+            console.log('paramName : '+UserName+' paramResolution : '+paramResolution);
+
+            if(UserName === null)
+            {
+                //res.writeHead(200, { "Content-Type": "text/ejs;characterset=utf8" });
+                //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');   
+                //res.sendFile(__dirname+'/participation.ejs');
+                console.log('로그인 안됨');
+                res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:"로그인 후 이용하십시오!"});
+            }
+            else if (database) {
+                authResolution(database, UserName, paramResolution,function(err,result){
                     if (database) {
                         if (err) {
                             console.log('Error!!!');
                             // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
                             // res.write('<h1>에러발생</h1>');
                             res.end();
-                            return;
                         }
- 
-                        if (docs) {
-                            UserName = docs[0].name;
-                            res.render('index', {log:UserName});
+                        if (result) {
+                            res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:UserName+'학생님께서는 이미 신청되셨습니다!'});
                         }
-                        else {
-                            console.log('empty Error!!!');
-                            res.write('<script type="text/javascript">alert("아이디 또는 비밀번호가 틀립니다.");</script>');
-                            // res.write(`<li class="login"style="float:right; list-style-type:none"><a href="/login.html">${docs[0].name}</a></li>`);
-                            fs.readFile(__dirname+'/login.html', function(err, data){
-                                if(err)
-                                    console.log(err.message);
-                                else
-                                    res.end(data);
-                            });
+                        else{
+                            addResolution(database, UserName, paramResolution,
+                                function (err, docs) {
+                                    if (database) {
+                                        if (err) {
+                                            console.log('Error!!!');
+                                            res.end();
+                                        }
+                
+                                        if (docs) {
+                                            //res.write('<script type="text/javascript">alert("'+UserName+'학생님 신청되셨습니다! 좋은 성적 거두시길!");</script>');
+                                            cnt();
+                                            res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:UserName+'님 영어 골든벨에 신청되셨습니다! 좋은 성적 거두시길!'});
+                                        }
+                                        else {
+                                            res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:0});
+                                        }
+                
+                                    }
+                                    else {
+                                        console.log('DB 연결 안됨');
+                                        // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                                        // res.write('<h1>databasae 연결 안됨</h1>');
+                                    res.end();
+                                    }
+                                }
+                            );
                         }
- 
                     }
                     else {
                         console.log('DB 연결 안됨');
                         // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
                         // res.write('<h1>databasae 연결 안됨</h1>');
-                       res.end();
+                    res.end();
                     }
- 
- 
- 
-                }
-            );
+                });
+            }
         }
-    }
-);
+    );
 
-router.route('/addUser.html').post(
-    function (req, res) {
-        console.log('/addUser 호출됨');
-        var paramID = req.body.id || req.query.id;
-        var paramPW = req.body.passwords || req.query.passwords;
-        var paramName = req.body.name || req.query.name;
-        console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
- 
-        if (database) {
+    router.route('/gsmfestival.ejs').post(
+        function (req, res) {
+            console.log('/gsmfestival 호출됨');
+            var paramTeam = req.body.Tname || req.query.Tname;
+            var paramMean = req.body.mean || req.query.mean;
+            var paramID = [req.body.CstudentID || req.query.CstudentID , req.body.studentID || req.query.studentID];
+            var paramName = [req.body.Cname || req.query.Cname, req.body.name || req.query.name];
+            console.log('paramTeam : '+paramTeam);
+
+            if(UserName === null)
+            {
+                //res.write('<script type="text/javascript">alert("로그인 후 이용하십시오!");</script>');   
+                //res.sendFile(__dirname+'/participation.ejs');
+                res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:"로그인 후 이용하십시오!"});
+            }
+            else if (database) {
+                authFestival(database, paramTeam, paramMean, paramID, paramName, function(err,result){
+                    if (database) {
+                        if (err) {
+                            console.log('Error!!!');
+                            res.end();
+                        }
+                        if (result) {
+                            // res.write('<script type="text/javascript">alert("이미 신청된 팀이름입니다!");</script>');
+                            res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:'이미 신청된 팀이름입니다!'});
+                        }
+                        else{
+                            addFestival(database, paramTeam, paramMean, paramID, paramName,
+                                function (err, docs) {
+                                    if (database) {
+                                        if (err) {
+                                            console.log('Error!!!');
+                                            // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                                            // res.write('<h1>에러발생</h1>');
+                                            res.end();
+                                        }
+                                        if (docs) {
+                                            //res.write('<script type="text/javascript">alert("'+docs.ops[0].team+'팀이 신청되었습니다! 좋은 성적 거두시길!");</script>');
+                                            cnt();
+                                            res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:UserName+'님 GSMFESTIVAL에 신청되셨습니다! 좋은 성적 거두시길!'});
+                                        }
+                                        else {
+                                            res.render('participation', {log:UserName, Teamcnt:Team_Cnt, alert1:0});
+                                        }
+                
+                                    }
+                                    else {
+                                        console.log('DB 연결 안됨');
+                                        // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                                        // res.write('<h1>databasae 연결 안됨</h1>');
+                                    res.end();
+                                    }
+                                }
+                            );
+                        }
+                    }
+                    else {
+                        console.log('DB 연결 안됨');
+                        // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                        // res.write('<h1>databasae 연결 안됨</h1>');
+                    res.end();
+                    }
+                });
+            }
+        }
+    );
+
+    router.route('/login.html').post(
+        function (req, res) {
+            console.log('/login 호출됨');
+            var paramID = req.body.id || req.query.id;
+            var paramPW = req.body.passwords || req.query.passwords;
+            console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
+    
             if (database) {
-                authUser(database, paramID, paramPW,
+                authUser(database, paramID, paramPW, 0,
                     function (err, docs) {
                         if (database) {
                             if (err) {
@@ -261,9 +283,15 @@ router.route('/addUser.html').post(
                                 res.end();
                                 return;
                             }
-     
+    
                             if (docs) {
-                                res.write('<script type="text/javascript">alert("이미 존재하는 회원입니다!");</script>');
+                                UserName = docs[0].name;
+                                res.render('index', {log:UserName});
+                            }
+                            else {
+                                console.log('empty Error!!!');
+                                res.write('<script type="text/javascript">alert("아이디 또는 비밀번호가 틀립니다.");</script>');
+                                // res.write(`<li class="login"style="float:right; list-style-type:none"><a href="/login.html">${docs[0].name}</a></li>`);
                                 fs.readFile(__dirname+'/login.html', function(err, data){
                                     if(err)
                                         console.log(err.message);
@@ -271,68 +299,236 @@ router.route('/addUser.html').post(
                                         res.end(data);
                                 });
                             }
-                            else {
-                                addUser(database, paramID, paramPW, paramName,
-                                    function (err, result) {
-                                        if (err) {
-                                            console.log('Error!!!');
-                                            res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-                                            res.write('<h1>에러발생</h1>');
-                                            res.end();
-                                            return;
-                                        }
-                     
-                                        if (result) {
-                                            res.write('<script type="text/javascript">alert("회원가입 성공!");</script>');
-                                            fs.readFile(__dirname+'/login.html', function(err, data){
-                                                if(err)
-                                                    console.log(err.message);
-                                                else
-                                                    res.end(data);
-                                            });
-                                        }
-                                        else {
-                                            res.write('<script type="text/javascript">alert("회원가입 오류");</script>');
-                                            fs.readFile(__dirname+'/login.html', function(err, data){
-                                                if(err)
-                                                    console.log(err.message);
-                                                else
-                                                    res.end(data);
-                                            });
-                                        }
-                                    }
-                                );
-                            }
-     
+    
                         }
                         else {
                             console.log('DB 연결 안됨');
                             // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
                             // res.write('<h1>databasae 연결 안됨</h1>');
-                           res.end();
+                        res.end();
                         }
-     
-     
-     
+    
+    
+    
                     }
                 );
             }
-            
         }
-        else {
-            console.log('DB 연결 안됨');
-            // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
-            // res.write('<h1>databasae 연결 안됨</h1>');
-           res.end();
+    );
+
+    router.route('/addUser.html').post(
+        function (req, res) {
+            console.log('/addUser 호출됨');
+            var paramID = req.body.id || req.query.id;
+            var paramPW = req.body.passwords || req.query.passwords;
+            var paramName = req.body.name || req.query.name;
+            console.log('paramID : ' + paramID + ', paramPW : ' + paramPW);
+    
+            if (database) {
+                if (database) {
+                    authUser(database, paramID, paramPW, paramName,
+                        function (err, docs) {
+                            if (database) {
+                                if (err) {
+                                    console.log('Error!!!');
+                                    // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                                    // res.write('<h1>에러발생</h1>');
+                                    res.end();
+                                    return;
+                                }
+        
+                                if (docs) {
+                                    res.write('<script type="text/javascript">alert("이미 존재하는 회원입니다!");</script>');
+                                    fs.readFile(__dirname+'/login.html', function(err, data){
+                                        if(err)
+                                            console.log(err.message);
+                                        else
+                                            res.end(data);
+                                    });
+                                }
+                                else {
+                                    addUser(database, paramID, paramPW, paramName,
+                                        function (err, result) {
+                                            if (err) {
+                                                console.log('Error!!!');
+                                                res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                                                res.write('<h1>에러발생</h1>');
+                                                res.end();
+                                                return;
+                                            }
+                        
+                                            if (result) {
+                                                res.write('<script type="text/javascript">alert("회원가입 성공!");</script>');
+                                                fs.readFile(__dirname+'/login.html', function(err, data){
+                                                    if(err)
+                                                        console.log(err.message);
+                                                    else
+                                                        res.end(data);
+                                                });
+                                            }
+                                            else {
+                                                res.write('<script type="text/javascript">alert("회원가입 오류");</script>');
+                                                fs.readFile(__dirname+'/login.html', function(err, data){
+                                                    if(err)
+                                                        console.log(err.message);
+                                                    else
+                                                        res.end(data);
+                                                });
+                                            }
+                                        }
+                                    );
+                                }
+        
+                            }
+                            else {
+                                console.log('DB 연결 안됨');
+                                // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                                // res.write('<h1>databasae 연결 안됨</h1>');
+                            res.end();
+                            }
+        
+        
+        
+                        }
+                    );
+                }
+                
+            }
+            else {
+                console.log('DB 연결 안됨');
+                // res.writeHead(200, { "Content-Type": "text/html;characterset=utf8" });
+                // res.write('<h1>databasae 연결 안됨</h1>');
+            res.end();
+            }
+    
         }
- 
-    }
-);
+    );
+}
+
+//router.get()
+{
+    router.get('/', function(req, res){
+        res.render('index' ,{log:UserName});
+    });
+    
+    router.get('/index.ejs', function(req, res){
+        res.render('index' ,{log:UserName});
+    });
+    
+    router.get('/mypage.ejs', function(req, res){
+        r=0;
+        authResolution(database, UserName, 0,function(err, docs){
+            if (err) {
+                console.log(err.message);
+                return;
+            }
+            if (docs) {
+                r+=1;
+                // res.render('mypage' ,{
+                //     contest:1,
+                //     log:UserName
+                //     // resol:0,
+                //     // TN:0,
+                //     // id:[0, 0],
+                //     // mean:0
+                // });console.log('보내짐');
+            }
+            else {
+                // res.render('mypage' ,{
+                //     contest:0,
+                //     log:UserName 
+                //     // resol:0,//result[0].resol,
+                //     // TN:0,
+                //     // id:[0, 0],
+                //     // mean:0
+                // });
+            }
+        });
+
+        searchFestival(database, 0, 0, UserName, UserName, function(err,docs){
+            if (err) {
+                console.log(err.message);
+                return;
+            }
+            if (docs) {
+                r+=2;
+            }
+            else {
+                // res.render('mypage' ,{
+                //     contest:0,
+                //     log:UserName 
+                //     // resol:0,//result[0].resol,
+                //     // TN:0,
+                //     // id:[0, 0],
+                //     // mean:0
+                // });
+            }
+        });
+
+        setTimeout(function(){
+            res.render('mypage' ,{
+                contest:r,
+                log:UserName
+                // resol:0,
+                // TN:0,
+                // id:[0, 0],
+                // mean:0
+            });console.log('보내짐');
+        }, 500);
+    });
+
+    router.get('/match.ejs', function(req, res){
+        res.render('match' ,{log:UserName});
+    });
+    router.get('/participation.ejs', function(req, res){
+        cnt();
+        res.render('participation', {log:UserName, Teamcnt:Team_Cnt,alert1:""});  
+    });
+    router.get('/schedule.ejs', function(req, res){
+        res.render('schedule' ,{log:UserName});     
+    });
+    
+    router.get('/goldenbell.ejs', function(req, res){
+        res.render('goldenbell' ,{log:UserName});     
+    });
+    
+    router.get('/gsmfestival.ejs', function(req, res){
+        res.render('gsmfestival' ,{log:UserName});     
+    });
+    
+    router.get('/login.html', function(req, res){
+        res.sendFile(__dirname + '/login.html');
+    });
+    
+    router.get('/logout', function(req, res){
+        UserName = null;
+        res.render('index', {log:UserName});
+    });
+    
+    router.get('/addUser.html', function(req, res){
+        res.sendFile(__dirname + '/addUser.html');
+    });
+    
+    router.get('/matchpng', function(req, res){
+        fs.readFile(__dirname + '/img/대진표.PNG', function(err, data){
+            res.writeHead(200, {'Content-Type':'text/html'});
+            res.end(data);
+        })
+    });
+    
+    router.get('/GCMLOGO', function(req, res){
+        fs.readFile(__dirname + '/img/GCM_logo.png', function(err, data){
+            res.writeHead(200, {'Content-Type':'text/html'});
+            res.end(data);
+        })
+    });
+
+}
 
 //login
 {
 
-    var authUser = function (db, id, password, callback) {
+    var authUser = function (db, id, password, name, callback) {
         console.log('input id :' + id.toString() + '  :  pw : ' + password);
      
         //cmd 에서 db.users  로 썻던 부분이 있는데 이때 이 컬럼(테이블)에 접근은 다음처럼 한다
@@ -341,7 +537,7 @@ router.route('/addUser.html').post(
         var result = users.find({ "id": id, "passwords": password });
         */
      
-        userModel.find({ "id": id, "passwords": password },
+        userModel.find({ "$or":[{"id": id}, {"passwords": password}, {"name":name}] },
             function (err, docs)
             {
                 if (err) {
@@ -613,124 +809,5 @@ router.route('/addUser.html').post(
 }
 
 app.use('/', router);       //라우트 미들웨어를 등록한다
-
-//router.get()
-{
-    router.get('/', function(req, res){
-        res.render('index' ,{log:UserName});
-    });
-    
-    router.get('/index.ejs', function(req, res){
-        res.render('index' ,{log:UserName});
-    });
-    
-    router.get('/mypage.ejs', function(req, res){
-        var r = 0;
-        authResolution(database, UserName, 0,function(err, docs){
-            if (err) {
-                console.log(err.message);
-                return;
-            }
-            if (docs) {
-                r+=1;
-                // res.render('mypage' ,{
-                //     contest:1,
-                //     log:UserName
-                //     // resol:0,
-                //     // TN:0,
-                //     // id:[0, 0],
-                //     // mean:0
-                // });console.log('보내짐');
-            }
-            else {
-                // res.render('mypage' ,{
-                //     contest:0,
-                //     log:UserName 
-                //     // resol:0,//result[0].resol,
-                //     // TN:0,
-                //     // id:[0, 0],
-                //     // mean:0
-                // });
-            }
-        });
-
-        searchFestival(database, 0, 0, UserName, UserName, function(err,docs){
-            if (err) {
-                console.log(err.message);
-                return;
-            }
-            if (docs) {
-                r+=2;
-            }
-            else {
-                // res.render('mypage' ,{
-                //     contest:0,
-                //     log:UserName 
-                //     // resol:0,//result[0].resol,
-                //     // TN:0,
-                //     // id:[0, 0],
-                //     // mean:0
-                // });
-            }
-        });
-
-        setTimeout(function(){
-            res.render('mypage' ,{
-                contest:r,
-                log:UserName
-                // resol:0,
-                // TN:0,
-                // id:[0, 0],
-                // mean:0
-            });console.log('보내짐');
-        }, 500);
-    });
-
-    router.get('/match.ejs', function(req, res){
-        res.render('match' ,{log:UserName});
-    });
-    router.get('/participation.ejs', function(req, res){
-        res.render('participation', {log:UserName, alert1:""});  
-    });
-    router.get('/schedule.ejs', function(req, res){
-        res.render('schedule' ,{log:UserName});     
-    });
-    
-    router.get('/goldenbell.ejs', function(req, res){
-        res.render('goldenbell' ,{log:UserName});     
-    });
-    
-    router.get('/gsmfestival.ejs', function(req, res){
-        res.render('gsmfestival' ,{log:UserName});     
-    });
-    
-    router.get('/login.html', function(req, res){
-        res.sendFile(__dirname + '/login.html');
-    });
-    
-    router.get('/logout', function(req, res){
-        UserName = null;
-        res.render('index', {log:UserName});
-    });
-    
-    router.get('/addUser.html', function(req, res){
-        res.sendFile(__dirname + '/addUser.html');
-    });
-    
-    router.get('/matchpng', function(req, res){
-        fs.readFile(__dirname + '/img/대진표.PNG', function(err, data){
-            res.writeHead(200, {'Content-Type':'text/html'});
-            res.end(data);
-        })
-    });
-    
-    router.get('/GCMLOGO', function(req, res){
-        fs.readFile(__dirname + '/img/GCM_logo.png', function(err, data){
-            res.writeHead(200, {'Content-Type':'text/html'});
-            res.end(data);
-        })
-    });
-
-}
 
 module.exports = router;

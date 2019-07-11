@@ -2,10 +2,15 @@
   font-family: '12롯데마트드림Light';
 }
 
+::-webkit-scrollbar {
+  display:none;
+}
+
 body {
   background: #f8f8f8;
   box-sizing: border-box;
   color: #51565d;
+  margin:0;
 }
 
 ul {
@@ -140,7 +145,7 @@ body .entries .entry:nth-child(2n) .title.big:before {
     display: block;
     width:4px;
     background-color:#DDE546;
-    top:12.2%;
+    top:10.3%;
     left:49.9%;
     height: 693px;
 }

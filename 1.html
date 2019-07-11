@@ -1,20 +1,20 @@
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script>function removeCheck() {
-        swal({
-          title: "정말 대회신청을 취소하시겠습니까??",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-          }).then((willDelete) => {
-          if (willDelete) {
-            swal("신청이 취소 되었습니다!", {icon: "success"});
-          }
-        });
-        return false;
-      }</script>
+<script>
+  function removeCheck() {
+    swal({
+      title: "정말 대회신청을 취소하시겠습니까??",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) swal("신청이 취소 되었습니다!", {icon: "success"});
+      });
+    return confirm("정말 대회신청을 취소하시겠습니까??");
+  }
+</script>
 <body onload="alt()">
-    <form action="" method="POST" class="forms" onsubmit="return removeCheck()">
+    <form action="" method="POST" class="forms" onclick="return removeCheck()">
         <dl>
         <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px; font-size:10px;">-</button> GSM 페스티벌</dt>
         </dl>

@@ -8,16 +8,7 @@
     <title>Mypage</title>
     <script>
       function removeCheck() {
-        swal({
-          title: "정말 대회신청을 취소하시겠습니까??",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-          }).then((willDelete) => {
-            if (willDelete) swal("신청이 취소 되었습니다!", {icon: "success"});
-            return true;
-          });
-        return false;
+        return confirm("정말 대회신청을 취소하시겠습니까??");
       }
     </script>
   </head>

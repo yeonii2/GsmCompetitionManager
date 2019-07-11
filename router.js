@@ -1,18 +1,21 @@
-var express = require('express');
-var router = express.Router();
-var app = express();
-var fs = require('fs');
+// var
+{
+    var express = require('express');
+    var router = express.Router();
+    var app = express();
+    var fs = require('fs');
 
-var userModel;
-var mongoose = require('mongoose');
-var database;
-var userSchema = null;
-var crypto = require("crypto");
+    var userModel;
+    var mongoose = require('mongoose');
+    var database;
+    var userSchema = null;
+    var crypto = require("crypto");
 
-var Team_Cnt = [];
-var UserName = null;
-var UserID = null;
-var r = 0;
+    var Team_Cnt = [];
+    var UserName = null;
+    var UserID = null;
+    var r = 0;
+}
 if(!database)
     connectDB();
 

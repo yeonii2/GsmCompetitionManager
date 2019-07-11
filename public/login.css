@@ -18,6 +18,7 @@ body .container { /*박스 위치*/
   height: 500px;
   margin: 80px auto 0;
   background-color: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 30px;
 }
 
 body .container .half { /*박스 안*/
@@ -29,7 +30,7 @@ body .container .half { /*박스 안*/
   padding: 58px 40px 0;
 }
 
-body .container h1 { /*GCM*/
+body .container h1 {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 23px;
@@ -55,9 +56,10 @@ body .container .tabs .tab {
   letter-spacing: 0;
   border-bottom: 1px solid lightgray;
   user-select: none;
+  transition: all 0.1s ease-in-out;
 }
 
-body .container .tabs .tab a { /*sign in/sign up 글씨 */
+body .container .tabs .tab a {
   font-size: 11px;
   text-decoration: none;
   text-transform: uppercase;
@@ -65,6 +67,10 @@ body .container .tabs .tab a { /*sign in/sign up 글씨 */
   transition: all 0.1s ease-in-out;
 }
 
+body .container .tabs .tab.active a,
+body .container .tabs .tab:hover a {
+  color: black;
+}
 
 body .container .tabs .tab.active {
   border-bottom: 1px solid #263238;
@@ -76,6 +82,16 @@ body .container .content form {
   height: 287px;
 }
 
+body .container .content label {
+  font-size: 12px;
+  color: #263238;
+  user-select: none;
+}
+
+body .container .content label:not([for='remember']) {
+  display: none;
+}
+
 body .container .content input.inpt {
   font-size: 14px;
   display: block;
@@ -85,11 +101,12 @@ body .container .content input.inpt {
   padding: 16px 13px;
   color: #999999;
   border: 1px solid #d9d9d9;
+  background: transparent;
   border-radius: 10px;
 }
 
 /*제출*/
-input.submit {
+body .container .content input.submit {
   cursor: pointer;
   width:100%;
   background-color: rgb(0, 176, 240);
@@ -100,6 +117,7 @@ input.submit {
   text-decoration: none;
   display: inline-block;
   font-size: 15px;
+  margin: 4px;
   border-radius:10px;
 }
 
@@ -108,22 +126,29 @@ body .container .content input.submit:hover {
   transition: all 0.2s;
 }
 
+body .container .content input:focus {
+  outline: none;
+}
+
 /*sign in에서는 name 입력칸이 필요 없음*/
 body .container .content .signup-cont {
   display: none;
 }
 
 /*화면이 새로 로딩될때마다 입력박스가 부드럽게 자리잡음*/
+body .container .content label:first-of-type,
 body .container .content input:first-of-type,
 body .container .content .more:first-of-type {
   animation: slideIn 0.4s cubic-bezier(0.37, 0.82, 0.2, 1);
 }
 
+body .container .content label:nth-of-type(2),
 body .container .content input:nth-of-type(2),
 body .container .content .more:nth-of-type(2) {
   animation: slideIn 0.5s cubic-bezier(0.37, 0.82, 0.2, 1);
 }
 
+body .container .content label:nth-of-type(3),
 body .container .content input:nth-of-type(3),
 body .container .content .more:nth-of-type(3) {
   animation: slideIn 0.6s cubic-bezier(0.37, 0.82, 0.2, 1);

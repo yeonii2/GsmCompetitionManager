@@ -1,3 +1,9 @@
+body {
+  background: #f8f8f8;
+  box-sizing: border-box;
+  color: #51565d;
+}
+
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, minmax(120px, 1fr));
@@ -102,6 +108,12 @@
   line-height: 50px;
   font-weight: 500;
 }
+.day--disabled {
+  color: rgba(152, 160, 166, 0.6);
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f9f9fa' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+  cursor: not-allowed;
+}
 
 .task {
   border-left-width: 3px;
@@ -171,7 +183,31 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   z-index: 2;
 }
-
+.task__detail:after, .task__detail:before {
+  bottom: 100%;
+  left: 30%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.task__detail:before {
+  border-bottom-color: rgba(166, 168, 179, 0.2);
+  border-width: 8px;
+  margin-left: -8px;
+}
+.task__detail:after {
+  border-bottom-color: #fff;
+  border-width: 6px;
+  margin-left: -6px;
+}
+.task__detail h2 {
+  font-size: 15px;
+  margin: 0;
+  color: #51565d;
+}
 .task__detail p {
   margin-top: 4px;
   font-size: 12px;

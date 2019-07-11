@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <style media="screen">
+    *{
+      font-family: '12롯데마트드림Light';
+    }
+
+    body {
+      background: #f8f8f8;
+      box-sizing: border-box;
+      color: #51565d;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border-bottom: 0.7px solid black;
+      
+    }
+
+    li {
+      float: left;
+      border-bottom: 0.7px solid black;
+    }
+
+    li a {
+      display: block;
+      color: #000000;
+      padding: 20px;
+      text-decoration: none;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    li a:hover {
+      background-color: #DDE546;
+    }
+
+    .now{
+      border-bottom: 1.2px solid #DDE546;
+    }
+
+    body .entries { /*글씨가 길어지면 밑으로 내리기*/
+      width: calc(100% - 80px);
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      left: -5px;
+    }
+
+    body .entries .entry { /*글씨 위치*/
+      width: calc(50% - 80px);
+      float: left;
+      padding: 20px;
+      clear: both;
+      text-align: right;
+    }
+
+    body .entries .entry:not(:first-child) {
+      margin-top: -60px;
+    }
+
+    body .entries .entry .title {
+      font-size: 32px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    /*왼쪽 글씨*/
+    body .entries .entry .title:before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 4px solid #ffffff;
+      background-color: #DDE546;
+      border-radius: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      right: -73px;
+      z-index: 1000;
+    }
+
+    body .entries .entry .title.big:before {
+      width: 24px;
+      height: 24px;
+      -webkit-transform: translate(8px, -50%);
+              transform: translate(8px, -50%);
+    }
+
+    body .entries .entry .body p {
+      line-height: 1.4em;
+    }
+
+    /*오른쪽 글씨*/
+    body .entries .entry:nth-child(2n) {
+      text-align: left;
+      float: right;
+    }
+
+    body .entries .entry:nth-child(2n) .title {
+      font-size: 32px;
+    }
+
+    body .entries .entry:nth-child(2n) .title:before {
+      left: -63px;
+    }
+
+    body .entries .entry:nth-child(2n) .title.big:before {
+      width: 24px;
+      height: 24px;
+      transform: translate(-8px, -50%);
+    }
+
+    .title{
+      color: #DDE546
+    }
+
+    .vr {
+        display: block;
+        width:10px;
+        background-color:#DDE546;
+        position:absolute;
+        top:0;
+        bottom:0;
+        left:150px;
+    }
+
+    .calendar-container {
+      width: 90%;
+      margin: auto;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      background: #fff;
+      max-width: 1200px;
+    }
+
+    .vr {
+        display: block;
+        width:4px;
+        background-color:#DDE546;
+        top:11.4%;
+        left:49.9%;
+        height: 693px;
+    }
+
+
+    </style>
+    <title>Index</title>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var log = 1;
+      var t
+      function func(target) 
+      {
+        t = target;
+        if(log == 1)
+        {
+          t.innerHTML = '<li class="login"style="float:right; list-style-type:none"><a href="/login.html" onclick="func(this)">로그아웃</a></li>';  //내용 자체가 html문서에 들어감
+        }
+      }
+    </script>
+    <ul class="bar">
+      <button onclick="func(this)">1</button>
+      <li class="bar-menu"><a href="schedule.html">일정표</a></li>
+      <li class="bar-menu"><a href="match.html">대진표</a></li>
+      <li class="bar-menu"><a href="participation.html">참가신청</a></li>
+      <a href="index.html"><img src="GCMLOGO" style="width:110px; position:relative; left:29%"></a>
+      <li class="login"style="float:right; list-style-type:none" >
+        <a href="/login.html" onclick="func(this)">로그인</a>
+      </li>
+    </ul>
+
+    <div class="calendar-container">
+      <div class="vr"></div>
+
+      <div class="timeline">
+        <div class="entries">
+          <div class="entry">
+            <div class="title">4/26</div>
+            <div class="body">
+              <p>체육대회</p>
+              <p>종목 : 피구, 농구, 계주, 사제 달리기, 줄다리기, 신서유기 게임, 노래 맞추기, 씨름, 축구 결승전, 팔씨름, 배드민턴, 멀리뛰기</p>
+            </div>
+          </div>
+          <div class="entry">
+            <div class="title">5/12</div>
+            <div class="body">
+              <p>Rerum sit libero possimus amet excepturi. Exercitationem enim dolores sunt praesentium dolorum praesentium.</p>
+            </div>
+          </div>
+          <div class="entry">
+            <div class="title">6/3</div>
+            <div class="body">
+              <p>e-sports 대회</p>
+              <p>종목 : 고군분투, 카트라이더, 리그오브레전드, 오버워치, 크레이지 아케이드, 루미큐브, 하스스톤, 철권</p>
+            </div>
+          </div>
+          <div class="entry">
+            <div class="title">6/27</div>
+            <div class="body">
+              <p>남/녀 배드민턴 최강자전</p>
+              <p>각 반에서 2번의 리그전과 토너먼트 전을 통하여 여자, 남자 총 4명씩을 선발한 후 학년 토너먼트 16강전을 한다. 최종 우승자에게는 상품이 수여된다.</p>
+            </div>
+          </div>
+          <div class="entry">
+            <div class="title big">7/11</div>
+            <div class="body">
+              <p>영어 팝송대회</p>
+              <p>
+                접수기간 : 5/1(수) ~ 5/17(금),
+                참가 대상 : 1,2학년 학생 중 참가 희망 학생,
+                대회 장소 : 강당,
+                대회 날짜 : 7/11(목),
+                결과 발표 및 시상 : 7/12(금)
+              </p>
+            </div>
+          </div>
+          <div class="entry">
+            <div class="title">9/30</div>
+            <div class="body">
+              <p>Impedit dolorem commodi explicabo fugit aut alias voluptatem. Magnam earum rerum quae dicta quibusdam aliquam ut.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -273,17 +273,16 @@ function cnt(){
             var parampw = req.body.pw || req.query.pw;
             var Newpw = req.body.repw || req.query.repw;
             if (database) {
-                userModel.ChangePassword(UserID,parampw,Newpw, function(err, docs) {
+                ChangePassword(UserID,parampw,Newpw, function(err, docs) {
                     if (err) {                     
                       console.log(err);
                     }
                     else if (docs.length > 0) {
-                      console.log(req.session.data);
                       console.log('pw 변경');
                     }
                     else {
                       console.log('비밀번호 틀림');
-                      res.render('index', { title: 'index', message:1 });
+                      res.render('index', {log:UserName});
                     }
                 });
             }
@@ -316,7 +315,7 @@ function cnt(){
                             }
                             else {
                                 console.log('empty Error!!!');
-                                res.write('<script type="text/javascript">alert("아이디 또는 비밀번호가 틀립니다.");</script>');
+                                res.write('<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script><script>function alt(){swal("아이디 또는 비밀번호가 틀립니다.", "", "error");}</script><body onload="alt()"></body>');
                                 // res.write(`<li class="login"style="float:right; list-style-type:none"><a href="/login.html">${docs[0].name}</a></li>`);
                                 fs.readFile(__dirname+'/login.html', function(err, data){
                                     if(err)
@@ -364,7 +363,7 @@ function cnt(){
                                 }
         
                                 if (docs) {
-                                    res.write('<script type="text/javascript">alert("이미 존재하는 회원입니다!");</script>');
+                                    res.write('<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script><script>function alt(){swal("이미 존재하는 회원입니다!", "", "error");}</script><body onload="alt()"></body>');
                                     fs.readFile(__dirname+'/login.html', function(err, data){
                                         if(err)
                                             console.log(err.message);
@@ -384,7 +383,7 @@ function cnt(){
                                             }
                         
                                             if (result) {
-                                                res.write('<script type="text/javascript">alert("회원가입 성공!");</script>');
+                                                res.write('<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script><script>function alt(){swal("회원가입 성공!", "", "success");}</script><body onload="alt()"></body>');
                                                 fs.readFile(__dirname+'/login.html', function(err, data){
                                                     if(err)
                                                         console.log(err.message);
@@ -393,7 +392,7 @@ function cnt(){
                                                 });
                                             }
                                             else {
-                                                res.write('<script type="text/javascript">alert("회원가입 오류");</script>');
+                                                res.write('<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script><script>function alt(){swal("회원가입 오류", "", "error");}</script><body onload="alt()"></body>');
                                                 fs.readFile(__dirname+'/login.html', function(err, data){
                                                     if(err)
                                                         console.log(err.message);
@@ -528,6 +527,7 @@ function cnt(){
     
     router.get('/logout', function(req, res){
         UserName = null;
+        UserID = null;
         res.render('index', {log:UserName});
     });
     
@@ -556,11 +556,9 @@ function cnt(){
 
     var authUser = function (db, id, pw, name, callback) {
         console.log('input id :' + id.toString() + '  :  pw : ' + pw);
-        Encryption(id, pw, function(_id, _pw){
-            id = _id;
+        Encryption(pw, function(_pw){
             pw = _pw;
         });
-
         userModel.find({ "$or":[{"id": id}, {"passwords": pw}, {"name":name}] },
             function (err, docs)
             {
@@ -584,11 +582,9 @@ function cnt(){
      
     var addUser = function (db, id, pw, name, callback) {
         console.log('add User 호출됨' + id + '  , ' + pw);
-        Encryption(id, pw, function(_id, _pw){
-            id = _id;
+        Encryption(pw, function(_pw){
             pw = _pw;
         });
-     
         var user = new userModel({ "id": id, "passwords": pw, "name": name });
      
         //user 정보를 저장하겠다는 함수
@@ -612,8 +608,7 @@ function cnt(){
     
     var addUser = function (db, id, pw, name, callback) {
         console.log('add User 호출됨' + id + '  , ' + pw);
-        Encryption(id, pw, function(_id, _pw){
-            id = _id;
+        Encryption(pw, function(_pw){
             pw = _pw;
         });
 
@@ -642,26 +637,19 @@ function cnt(){
      
     };
 
-    var Encryption = function(id, pw, callback){
+    var Encryption = function(pw, callback){
         var shasum = crypto.createHash('sha256');
-        var shasum1 = crypto.createHash('sha256');
-
-        shasum.update(id);
-        shasum1.update(pw);
-
-        var hashid = shasum.digest('hex');
-        var hashpw = shasum1.digest('hex');
-        callback(hashid, hashpw);
+        shasum.update(pw);
+        var hashpw = shasum.digest('hex');
+        callback(hashpw);
     }
 
     var ChangePassword = function(id,pw,repw,callback){
-        if(!db) return;
-        Encryption(id, pw, function(id, pw){
-            this.id = id;
-            this.pw = pw;
+        if(!database) return;
+        Encryption(pw, function(_pw){
+            pw = _pw;
         });
-
-        db.collection('User').find({ "id": id, "password": pw},function (err, docs) {
+        userModel.find({ "id": id, "password": pw},function (err, docs) {
             if (err) {
                 callback(err, null);
             }
@@ -669,8 +657,7 @@ function cnt(){
                 var shasum1 = crypto.createHash('sha256');
                 shasum1.update(repw);
                 var rehashpw = shasum1.digest('hex');
-                db.collection('User').update({ 'id':id,'password':pw},
-                {$set:{'id':id,'password':rehashpw}});
+                userModel.update({ 'id':id,'password':pw},{$set:{'id':id,'password':rehashpw}});
                 callback(null, docs);
             }
             else {

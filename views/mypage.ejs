@@ -4,13 +4,20 @@
     <meta charset="utf-8">
     <link rel= "stylesheet" type="text/css" href="index.css">
     <link rel= "stylesheet" type="text/css" href="mypage.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <title>Mypage</title>
     <script>
       function removeCheck() {
-        if (confirm("정말 삭제하시겠습니까??") == false)
-          return false;
-        else
-          return true;
+        swal({
+          title: "정말 대회신청을 취소하시겠습니까??",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+          }).then((willDelete) => {
+            if (willDelete) swal("신청이 취소 되었습니다!", {icon: "success"});
+            return true;
+          });
+        return false;
       }
     </script>
   </head>
@@ -34,7 +41,7 @@
       <%if(contest === 1||contest === 3){%>
         <form action="/mypage1.ejs" method="POST" class="forms" onsubmit="return removeCheck()">
           <dl>
-            <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px;">-</button> 영어 골든벨</dt>
+            <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px;  font-size:10px;">-</button> 영어 골든벨</dt>
           </dl>
         </form>
       <%}%>
@@ -43,12 +50,10 @@
       %>
         <form action="/mypage2.ejs" method="POST" class="forms" onsubmit="return removeCheck()">
           <dl>
-            <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px;">-</button> GSM 페스티벌</dt>
+            <dt><button type="submit" style="width:20px; height: 20px; padding: 3px; background-color: red; border-radius: 20px; font-size:10px;">-</button> GSM 페스티벌</dt>
           </dl>
         </form>
       <%}%>
-
-
       <center><button type="button" name="button" class="button"><a href="/logout" style="font-size:16px; color:white">로그아웃</a></button></center>
     </div>
   </body>

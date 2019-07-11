@@ -104,7 +104,7 @@ textarea.input {
   top: -1px;
   left: -1px;
   pointer-events: none;
-  border: 1px solid rgb(0, 176, 240);
+  border: 1px solid #00ad5f;
 
   visibility: hidden;
   opacity: 0;

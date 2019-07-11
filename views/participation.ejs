@@ -9,7 +9,7 @@
   </head>
   <body onload="var data = <%= JSON.stringify(alert1)%>;
   if(data!=''){
-	  var name = <%=JSON.stringify(log)%>;  
+	  var name = <%=JSON.stringify(log)%>;
 	  if(data === name+'님 영어 골든벨에 신청되셨습니다! 좋은 성적 거두시길!' || data === name+'님 GSMFESTIVAL에 신청되셨습니다! 좋은 성적 거두시길!'){
 		swal(<%= JSON.stringify(alert1)%>, '', 'success');
 	}
